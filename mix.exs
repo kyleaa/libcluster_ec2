@@ -11,7 +11,9 @@ defmodule ClusterEC2.Mixfile do
      description: description(),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     deps: deps(),
+     package: package(),
+    ]
   end
 
   # Configuration for the OTP application
