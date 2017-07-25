@@ -11,7 +11,7 @@ defmodule ClusterEC2 do
   end
 
   def local_instance_tags do
-    EC2.describe_instances([{:"instance_id.1", local_instance_id()}])
+    EC2.describe_instances(instance_id: local_instance_id())
     |> ExAws.request!
     |> extract_tags
   end

@@ -5,6 +5,10 @@ defmodule ClusterEC2.Mixfile do
     [app: :libcluster_ec2,
      version: "0.1.0",
      elixir: "~> 1.4",
+     name: "exjprop",
+     source_url: "https://github.com/kyleaa/libcluster_ec2",
+     homepage_url: "https://github.com/kyleaa/libcluster_ec2",
+     description: description(),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]
@@ -18,21 +22,26 @@ defmodule ClusterEC2.Mixfile do
     [extra_applications: [:logger]]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:my_dep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:my_dep, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [
-     {:libcluster, "~> 2.0.3"},
-     {:ex_aws, git: "https://www.github.com/kyleaa/ex_aws", ref: "ec2-describetags", override: true},
+     {:libcluster, "~> 2.0"},
+     {:ex_aws, "~> 1.1"},
      {:sweet_xml, "~> 0.6"},
-     {:hackney, "== 1.6.5"}
+     {:hackney, "~> 1.8"}
     ]
+  end
+
+  defp description do
+    """
+    EC2 clustering strategy for libcluster
+    """
+  end
+
+  def package do
+    [ maintainers: ["Kyle Anderson"],
+      licenses: ["MIT License"],
+      links: %{
+        "GitHub" => "https://github.com/kyleaa/libcluster_ec2.git",
+        }]
   end
 end
