@@ -1,4 +1,5 @@
-# ClusterEC2
+ClusterEC2
+==========
 
 This is an EC2 clustering strategy for  [libcluster](https://hexdocs.pm/libcluster/). It currently supports identifying nodes based on EC2 tags.
 
@@ -15,10 +16,6 @@ config :libcluster,
     ]
   ]
 ```
-
-`:ec2_tagvalue` can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation).
-
-`app_prefix` will be appended to the node's private IP address to create the node name.
 
 ## Installation
 

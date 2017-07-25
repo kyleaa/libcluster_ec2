@@ -3,10 +3,12 @@ defmodule ClusterEC2.Strategy.Tags do
   This clustering strategy works by loading all instances that have the given
   tag associated with them.
 
-  All instances must be
+  All instances must be started with the same app name and have security groups
+  configured to allow inter-node communication.
+
       config :libcluster,
         topologies: [
-          k8s_example: [
+          tags_example: [
             strategy: #{__MODULE__},
             config: [
 
@@ -14,6 +16,17 @@ defmodule ClusterEC2.Strategy.Tags do
               ec2_tagvalue: "tagvalue"
               ip_type: :private
               polling_interval: 10_000]]]
+
+## Configuration Options
+
+| Key | Required | Description |
+| --- | -------- | ----------- |
+| `:ec2_tagname` | yes | Name of the EC2 instance tag to look for. |
+| `:ec2_tagvalue` | yes | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
+| `app_prefix` | yes | Will be appended to the node's private IP address to create the node name. |
+| `:ip_type` | no | One of :private or :public, defaults to :private |
+| `:polling_interval` | no | Number of milliseconds to wait between polls to the EC2 api. Defaults to 5_000 |
+
   """
   use GenServer
   use Cluster.Strategy
@@ -110,7 +123,7 @@ defmodule ClusterEC2.Strategy.Tags do
   defp fetch_tag_value(k,v) when is_function(v, 1), do: v.(k)
   defp fetch_tag_value(_k,v), do: v
 
-  def ip_to_nodename(list, app_prefix) when is_list(list) do
+  defp ip_to_nodename(list, app_prefix) when is_list(list) do
     list
     |> Enum.map(fn i ->
       :"#{app_prefix}@#{i}"

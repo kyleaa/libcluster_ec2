@@ -1,20 +1,33 @@
 defmodule ClusterEC2 do
+
+  @moduledoc File.read!("#{__DIR__}/../README.md")
+
   alias ExAws.EC2
   import SweetXml, only: [sigil_x: 2]
 
   @meta_api_root "http://169.254.169.254/latest/meta-data/"
 
-  def local_instance_tag_value(tagname), do: local_instance_tags() |> Map.get(tagname)
-
+  @doc """
+    Queries the local EC2 instance metadata API to determine the instance ID of the current instance.
+  """
   def local_instance_id do
     request @meta_api_root <> "instance-id/"
   end
 
+  @doc """
+    Uses the EC2 API to determine the tags of the current instance.
+  """
   def local_instance_tags do
     EC2.describe_instances(instance_id: local_instance_id())
     |> ExAws.request!
     |> extract_tags
   end
+
+  @doc """
+    Retrieves the value of a specific tag for the current instance.
+  """
+  def local_instance_tag_value(tagname), do: local_instance_tags() |> Map.get(tagname)
+
 
   defp extract_tags(%{body: xml}) do
     xml

@@ -5,7 +5,7 @@ defmodule ClusterEC2.Mixfile do
     [app: :libcluster_ec2,
      version: "0.1.0",
      elixir: "~> 1.4",
-     name: "exjprop",
+     name: "libcluster_ec2",
      source_url: "https://github.com/kyleaa/libcluster_ec2",
      homepage_url: "https://github.com/kyleaa/libcluster_ec2",
      description: description(),
