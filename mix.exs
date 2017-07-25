@@ -29,7 +29,8 @@ defmodule ClusterEC2.Mixfile do
      {:libcluster, "~> 2.0"},
      {:ex_aws, "~> 1.1"},
      {:sweet_xml, "~> 0.6"},
-     {:hackney, "~> 1.8"}
+     {:hackney, "~> 1.8"},
+     {:ex_doc, ">= 0.0.0", only: :dev},
     ]
   end
 
