@@ -37,8 +37,13 @@ defmodule ClusterEC2.Strategy.Tags do
 
   @default_polling_interval 5_000
 
-  def start_link(opts), do: GenServer.start_link(__MODULE__, opts)
+  def start_link(opts) do
+    Application.ensure_all_started(:hackney)
+    Application.ensure_all_started(:ex_aws)
+    GenServer.start_link(__MODULE__, opts)
+  end
   def init(opts) do
+
     state = %State{
       topology: Keyword.fetch!(opts, :topology),
       connect: Keyword.fetch!(opts, :connect),
