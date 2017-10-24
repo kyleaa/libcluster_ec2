@@ -11,9 +11,9 @@ defmodule ClusterEC2.Strategy.Tags do
           tags_example: [
             strategy: #{__MODULE__},
             config: [
-
               ec2_tagname: "mytag",
               ec2_tagvalue: "tagvalue"
+              app_prefix: "app"
               ip_type: :private
               polling_interval: 10_000]]]
 
@@ -22,8 +22,8 @@ defmodule ClusterEC2.Strategy.Tags do
 | Key | Required | Description |
 | --- | -------- | ----------- |
 | `:ec2_tagname` | yes | Name of the EC2 instance tag to look for. |
-| `:ec2_tagvalue` | yes | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
-| `app_prefix` | yes | Will be appended to the node's private IP address to create the node name. |
+| `:ec2_tagvalue` | no | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
+| `app_prefix` | no | Will be appended to the node's private IP address to create the node name. |
 | `:ip_type` | no | One of :private or :public, defaults to :private |
 | `:polling_interval` | no | Number of milliseconds to wait between polls to the EC2 api. Defaults to 5_000 |
 
@@ -90,8 +90,8 @@ defmodule ClusterEC2.Strategy.Tags do
   @spec get_nodes(State.t) :: [atom()]
   defp get_nodes(%State{topology: topology, config: config}) do
     tag_name = Keyword.fetch!(config, :ec2_tagname)
-    tag_value = Keyword.fetch!(config, :ec2_tagvalue)
-    app_prefix = Keyword.fetch!(config, :app_prefix)
+    tag_value = Keyword.get(config, :ec2_tagvalue, &ClusterEC2.local_instance_tag_value/1)
+    app_prefix = Keyword.get(config, :app_prefix, "app")
     cond do
       tag_name != nil and tag_value != nil and app_prefix != nil ->
         params = [filters: ["tag:#{tag_name}": fetch_tag_value(tag_name,tag_value)]]

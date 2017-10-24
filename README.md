@@ -9,9 +9,7 @@ config :libcluster,
     example: [
       strategy: ClusterEC2.Strategy.Tags,
       config: [
-        ec2_tagname: "elasticbeanstalk:environment-name",
-        ec2_tagvalue: &ClusterEC2.local_instance_tag_value/1,
-        app_prefix: "phoenix"
+        ec2_tagname: "elasticbeanstalk:environment-name"
       ],
     ]
   ]
