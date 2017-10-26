@@ -23,7 +23,7 @@ defmodule ClusterEC2.Strategy.Tags do
 | --- | -------- | ----------- |
 | `:ec2_tagname` | yes | Name of the EC2 instance tag to look for. |
 | `:ec2_tagvalue` | no | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
-| `app_prefix` | no | Will be appended to the node's private IP address to create the node name. |
+| `:app_prefix` | no | Will be appended to the node's private IP address to create the node name. |
 | `:ip_type` | no | One of :private or :public, defaults to :private |
 | `:polling_interval` | no | Number of milliseconds to wait between polls to the EC2 api. Defaults to 5_000 |
 
@@ -106,14 +106,8 @@ defmodule ClusterEC2.Strategy.Tags do
           _ ->
             []
         end
-      app_prefix == nil ->
-        warn topology, "ec2 tags strategy is selected, but :app_prefix is not configured!"
-        []
       tag_name == nil ->
         warn topology, "ec2 tags strategy is selected, but :ec2_tagname is not configured!"
-        []
-      tag_value == nil ->
-        warn topology, "ec2 tags strategy is selected, but :ec2_tagvalue is not configured!"
         []
       :else ->
         warn topology, "ec2 tags strategy is selected, but is not configured!"
@@ -130,9 +124,8 @@ defmodule ClusterEC2.Strategy.Tags do
 
   defp ip_to_nodename(list, app_prefix) when is_list(list) do
     list
-    |> Enum.map(fn i ->
-      :"#{app_prefix}@#{i}"
+    |> Enum.map(fn ip ->
+      :"#{app_prefix}@#{ip}"
     end)
   end
-
 end

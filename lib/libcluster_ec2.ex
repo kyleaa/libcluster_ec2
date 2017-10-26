@@ -28,7 +28,6 @@ defmodule ClusterEC2 do
   """
   def local_instance_tag_value(tagname), do: local_instance_tags() |> Map.get(tagname)
 
-
   defp extract_tags(%{body: xml}) do
     xml
     |> SweetXml.xpath(~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/tagSet/item"l,
