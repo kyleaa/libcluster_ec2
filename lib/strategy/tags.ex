@@ -98,7 +98,7 @@ defmodule ClusterEC2.Strategy.Tags do
         request = ExAws.EC2.describe_instances(params)
         require Logger
         Logger.debug "#{inspect request}"
-        case ExAws.request(request) do
+        case ExAws.request(request, region: ClusterEC2.instance_region()) do
           {:ok, %{body: body}} ->
             body
             |> SweetXml.xpath(ip_xpath(Keyword.get(config, :ip_type, :private)))

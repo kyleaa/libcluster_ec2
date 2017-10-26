@@ -15,11 +15,18 @@ defmodule ClusterEC2 do
   end
 
   @doc """
+    Queries the local EC2 instance metadata API to determine the aws resource region of the current instance.
+  """
+  def instance_region do
+    request @meta_api_root <> "services/domain/"
+  end
+
+  @doc """
     Uses the EC2 API to determine the tags of the current instance.
   """
   def local_instance_tags do
     EC2.describe_instances(instance_id: local_instance_id())
-    |> ExAws.request!
+    |> ExAws.request!(region: instance_region())
     |> extract_tags
   end
 
