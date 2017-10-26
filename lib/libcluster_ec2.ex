@@ -26,6 +26,8 @@ defmodule ClusterEC2 do
     Uses the EC2 API to determine the tags of the current instance.
   """
   def local_instance_tags do
+    IO.puts instance_region()
+
     EC2.describe_instances(instance_id: local_instance_id())
     |> ExAws.request!(region: instance_region())
     |> extract_tags
