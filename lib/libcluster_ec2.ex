@@ -11,7 +11,7 @@ defmodule ClusterEC2 do
     Queries the local EC2 instance metadata API to determine the instance ID of the current instance.
   """
   def local_instance_id do
-    request @meta_api_root <> "instance-id/"
+    request(@meta_api_root <> "instance-id/")
   end
 
   @doc """
@@ -26,8 +26,6 @@ defmodule ClusterEC2 do
     Uses the EC2 API to determine the tags of the current instance.
   """
   def local_instance_tags do
-    IO.puts instance_region()
-
     EC2.describe_instances(instance_id: local_instance_id())
     |> ExAws.request!(region: instance_region())
     |> extract_tags
@@ -36,7 +34,10 @@ defmodule ClusterEC2 do
   @doc """
     Retrieves the value of a specific tag for the current instance.
   """
-  def local_instance_tag_value(tagname), do: local_instance_tags() |> Map.get(tagname)
+  def local_instance_tag_value(tagname) do
+    local_instance_tags()
+    |> Map.get(tagname)
+  end
 
   defp extract_tags(%{body: xml}) do
     xml
