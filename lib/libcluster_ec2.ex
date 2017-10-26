@@ -18,7 +18,8 @@ defmodule ClusterEC2 do
     Queries the local EC2 instance metadata API to determine the aws resource region of the current instance.
   """
   def instance_region do
-    request @meta_api_root <> "services/domain/"
+    request @meta_api_root <> "placement/availability-zone"
+    |> String.slice(0..-2)
   end
 
   @doc """
