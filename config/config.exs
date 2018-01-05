@@ -28,6 +28,10 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+config :ex_aws,
+  access_key_id: "xxx",
+  secret_access_key: "xxx"
+
 if Mix.env == :test do
     config :tesla, adapter: :mock
 end

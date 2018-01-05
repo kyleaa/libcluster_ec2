@@ -38,7 +38,7 @@ defmodule ClusterEC2.Strategy.Tags do
   @default_polling_interval 5_000
 
   def start_link(opts) do
-    Application.ensure_all_started(:hackney)
+    Application.ensure_all_started(:tesla)
     Application.ensure_all_started(:ex_aws)
     GenServer.start_link(__MODULE__, opts)
   end
@@ -89,7 +89,7 @@ defmodule ClusterEC2.Strategy.Tags do
   @spec get_nodes(State.t) :: [atom()]
   defp get_nodes(%State{topology: topology, config: config}) do
     tag_name = Keyword.fetch!(config, :ec2_tagname)
-    tag_value = Keyword.get(config, :ec2_tagvalue, &ClusterEC2.local_instance_tag_value/1)
+    tag_value = Keyword.get(config, :ec2_tagvalue, &local_instance_tag_value/1)
     app_prefix = Keyword.get(config, :app_prefix, "app")
     cond do
       tag_name != nil and tag_value != nil and app_prefix != nil ->
@@ -112,6 +112,29 @@ defmodule ClusterEC2.Strategy.Tags do
         warn topology, "ec2 tags strategy is selected, but is not configured!"
         []
     end
+  end
+  
+  defp local_instance_tag_value(tagname) do
+    local_instance_tags()
+      |> Map.get(tagname)
+  end
+
+  defp local_instance_tags do
+    body = ExAws.EC2.describe_instances(instance_id: ClusterEC2.local_instance_id())
+    case ExAws.request(body, region: ClusterEC2.instance_region()) do
+      {:ok, body} -> extract_tags(body)
+      {:error, _} -> %{}
+    end
+  end
+
+  defp extract_tags(%{body: xml}) do
+    xml
+      |> SweetXml.xpath(~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/tagSet/item"l,
+        key: ~x"./key/text()"s,
+        value: ~x"./value/text()"s
+      )
+      |> Stream.map(fn %{key: k, value: v} -> {k,v} end)
+      |> Enum.into(%{})
   end
 
   defp ip_xpath(:private), do: ~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/privateIpAddress/text()"ls
