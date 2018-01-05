@@ -9,7 +9,6 @@ defmodule ClusterEC2Test do
       %{method: :get, url: "http://169.254.169.254/latest/meta-data/placement/availability-zone/"} ->
         %Tesla.Env{status: 200, body: "eu-central-1b"}
     end
-
     :ok
   end
 
@@ -19,9 +18,5 @@ defmodule ClusterEC2Test do
   
   test "test return instance_region" do
     assert "eu-central-1" == ClusterEC2.instance_region()
-  end
-
-  test "the truth" do
-    assert 1 + 1 == 2
   end
 end

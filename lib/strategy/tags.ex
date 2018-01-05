@@ -116,7 +116,7 @@ defmodule ClusterEC2.Strategy.Tags do
   
   defp local_instance_tag_value(tagname) do
     local_instance_tags()
-      |> Map.get(tagname)
+    |> Map.get(tagname)
   end
 
   defp local_instance_tags do
@@ -129,12 +129,12 @@ defmodule ClusterEC2.Strategy.Tags do
 
   defp extract_tags(%{body: xml}) do
     xml
-      |> SweetXml.xpath(~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/tagSet/item"l,
-        key: ~x"./key/text()"s,
-        value: ~x"./value/text()"s
-      )
-      |> Stream.map(fn %{key: k, value: v} -> {k,v} end)
-      |> Enum.into(%{})
+    |> SweetXml.xpath(~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/tagSet/item"l,
+      key: ~x"./key/text()"s,
+      value: ~x"./value/text()"s
+    )
+    |> Stream.map(fn %{key: k, value: v} -> {k,v} end)
+    |> Enum.into(%{})
   end
 
   defp ip_xpath(:private), do: ~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/privateIpAddress/text()"ls
