@@ -58,70 +58,83 @@ defmodule ClusterEC2.Strategy.Tags do
     handle_info(:load, state)
   end
   def handle_info(:load, %State{topology: topology, connect: connect, disconnect: disconnect, list_nodes: list_nodes} = state) do
-    new_nodelist = MapSet.new(get_nodes(state))
-    added        = MapSet.difference(new_nodelist, state.meta)
-    removed      = MapSet.difference(state.meta, new_nodelist)
-    new_nodelist = case Cluster.Strategy.disconnect_nodes(topology, disconnect, list_nodes, MapSet.to_list(removed)) do
-                :ok ->
-                  new_nodelist
-                {:error, bad_nodes} ->
-                  # Add back the nodes which should have been removed, but which couldn't be for some reason
-                  Enum.reduce(bad_nodes, new_nodelist, fn {n, _}, acc ->
-                    MapSet.put(acc, n)
-                  end)
-              end
-    new_nodelist = case Cluster.Strategy.connect_nodes(topology, connect, list_nodes, MapSet.to_list(added)) do
-              :ok ->
-                new_nodelist
-              {:error, bad_nodes} ->
-                # Remove the nodes which should have been added, but couldn't be for some reason
-                Enum.reduce(bad_nodes, new_nodelist, fn {n, _}, acc ->
-                  MapSet.delete(acc, n)
-                end)
-            end
-    Process.send_after(self(), :load, Keyword.get(state.config, :polling_interval, @default_polling_interval))
-    {:noreply, %{state | :meta => new_nodelist}}
+    case get_nodes(state) do
+      {:ok, new_nodelist} ->
+        added        = MapSet.difference(new_nodelist, state.meta)
+        removed      = MapSet.difference(state.meta, new_nodelist)
+        new_nodelist = case Cluster.Strategy.disconnect_nodes(topology, disconnect, list_nodes, MapSet.to_list(removed)) do
+                    :ok ->
+                      new_nodelist
+                    {:error, bad_nodes} ->
+                      # Add back the nodes which should have been removed, but which couldn't be for some reason
+                      Enum.reduce(bad_nodes, new_nodelist, fn {n, _}, acc ->
+                        MapSet.put(acc, n)
+                      end)
+                  end
+        new_nodelist = case Cluster.Strategy.connect_nodes(topology, connect, list_nodes, MapSet.to_list(added)) do
+                  :ok ->
+                    new_nodelist
+                  {:error, bad_nodes} ->
+                    # Remove the nodes which should have been added, but couldn't be for some reason
+                    Enum.reduce(bad_nodes, new_nodelist, fn {n, _}, acc ->
+                      MapSet.delete(acc, n)
+                    end)
+                end
+        Process.send_after(self(), :load, Keyword.get(state.config, :polling_interval, @default_polling_interval))
+        {:noreply, %{state | :meta => new_nodelist}}
+      _ ->
+        {:noreply, state}
+    end
   end
   def handle_info(_, state) do
     {:noreply, state}
   end
 
-  @spec get_nodes(State.t) :: [atom()]
+  @spec get_nodes(State.t) :: {:ok, [atom()]} | {:error, []}
   defp get_nodes(%State{topology: topology, config: config}) do
+    instance_id = ClusterEC2.local_instance_id()
+    region = ClusterEC2.instance_region()
     tag_name = Keyword.fetch!(config, :ec2_tagname)
-    tag_value = Keyword.get(config, :ec2_tagvalue, &local_instance_tag_value/1)
+    tag_value = Keyword.get(config, :ec2_tagvalue, &local_instance_tag_value(&1, instance_id, region))
     app_prefix = Keyword.get(config, :app_prefix, "app")
     cond do
-      tag_name != nil and tag_value != nil and app_prefix != nil ->
+      tag_name != nil and tag_value != nil and app_prefix != nil and instance_id != "" and region != "" ->
         params = [filters: ["tag:#{tag_name}": fetch_tag_value(tag_name,tag_value)]]
         request = ExAws.EC2.describe_instances(params)
         require Logger
         Logger.debug "#{inspect request}"
-        case ExAws.request(request, region: ClusterEC2.instance_region()) do
+        case ExAws.request(request, region: region) do
           {:ok, %{body: body}} ->
-            body
+            resp = body
             |> SweetXml.xpath(ip_xpath(Keyword.get(config, :ip_type, :private)))
             |> ip_to_nodename(app_prefix)
+            {:ok, MapSet.new(resp)}
           _ ->
-            []
+            {:error, []}
         end
+      instance_id == "" ->
+        warn topology, "instance id could not be fetched!"
+        {:error, []}
+      region == "" ->
+        warn topology, "region could not be fetched!"
+        {:error, []}
       tag_name == nil ->
         warn topology, "ec2 tags strategy is selected, but :ec2_tagname is not configured!"
-        []
+        {:error, []}
       :else ->
         warn topology, "ec2 tags strategy is selected, but is not configured!"
-        []
+        {:error, []}
     end
   end
-  
-  defp local_instance_tag_value(tagname) do
-    local_instance_tags()
-    |> Map.get(tagname)
+
+  defp local_instance_tag_value(tag_name, instance_id, region) do
+    ExAws.EC2.describe_instances(instance_id: instance_id)
+    |> local_instance_tags(region)
+    |> Map.get(tag_name)
   end
 
-  defp local_instance_tags do
-    body = ExAws.EC2.describe_instances(instance_id: ClusterEC2.local_instance_id())
-    case ExAws.request(body, region: ClusterEC2.instance_region()) do
+  defp local_instance_tags(body, region) do
+    case ExAws.request(body, region: region) do
       {:ok, body} -> extract_tags(body)
       {:error, _} -> %{}
     end

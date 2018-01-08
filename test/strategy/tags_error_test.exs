@@ -1,13 +1,13 @@
-defmodule Strategy.TagsTest do
+defmodule Strategy.TagsErrorTest do
     use ExUnit.Case, async: false
     doctest ClusterEC2
 
     setup do
       Tesla.Mock.mock_global fn
         %{method: :get, url: "http://169.254.169.254/latest/meta-data/instance-id/"} ->
-        %Tesla.Env{status: 200, body: "i-0fdde7ca9faef9751"}
+        %Tesla.Env{status: 200, body: ""}
         %{method: :get, url: "http://169.254.169.254/latest/meta-data/placement/availability-zone/"} ->
-        %Tesla.Env{status: 200, body: "eu-central-1b"}
+        %Tesla.Env{status: 200, body: ""}
       end
 
       ops = [
