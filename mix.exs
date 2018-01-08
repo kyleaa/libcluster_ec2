@@ -30,6 +30,8 @@ defmodule ClusterEC2.Mixfile do
      {:ex_aws, "~> 1.1"},
      {:sweet_xml, "~> 0.6"},
      {:hackney, "~> 1.8"},
+     {:poison, ">= 1.0.0"},
+     {:tesla, "~> 0.10.0"},
      {:ex_doc, ">= 0.0.0", only: :dev},
     ]
   end
