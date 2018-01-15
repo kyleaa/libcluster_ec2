@@ -83,6 +83,7 @@ defmodule ClusterEC2.Strategy.Tags do
         Process.send_after(self(), :load, Keyword.get(state.config, :polling_interval, @default_polling_interval))
         {:noreply, %{state | :meta => new_nodelist}}
       _ ->
+        Process.send_after(self(), :load, Keyword.get(state.config, :polling_interval, @default_polling_interval))
         {:noreply, state}
     end
   end
