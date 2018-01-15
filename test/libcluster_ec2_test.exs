@@ -12,11 +12,11 @@ defmodule ClusterEC2Test do
     :ok
   end
 
-  test "test return local_instance_id" do
+  test "return local_instance_id" do
     assert "i-0fdde7ca9faef9751" == ClusterEC2.local_instance_id()
   end
 
-  test "test return instance_region" do
+  test "return instance_region" do
     assert "eu-central-1" == ClusterEC2.instance_region()
   end
 end
