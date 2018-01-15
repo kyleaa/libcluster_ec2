@@ -6,13 +6,14 @@ defmodule ClusterEC2 do
 
   plug Tesla.Middleware.BaseUrl, "http://169.254.169.254/latest/meta-data"
   plug Tesla.Middleware.Tuples
+  plug Tesla.Middleware.DebugLogger
 
   @doc """
     Queries the local EC2 instance metadata API to determine the instance ID of the current instance.
   """
   @spec local_instance_id() :: binary()
   def local_instance_id do
-    case get("/instance-id/") do
+    case get("/instance-id") do
       %{status: 200, body: body} -> body
       _ -> ""
     end
@@ -23,7 +24,7 @@ defmodule ClusterEC2 do
   """
   @spec instance_region() :: binary()
   def instance_region do
-    case get("/placement/availability-zone/") do
+    case get("/placement/availability-zone") do
       %{status: 200, body: body} -> String.slice(body, 0..-2)
       _ -> ""
     end
