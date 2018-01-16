@@ -1,3 +1,6 @@
+v0.2.1
+- Bug fix: Reconnection error handling. https://github.com/kyleaa/libcluster_ec2/pull/6
+
 v0.2.0
 - Enhancement: Add error handling for AWS/EC2 API calls. In the event of a failure to communicate, maintain current node list. https://github.com/kyleaa/libcluster_ec2/pull/4
 
