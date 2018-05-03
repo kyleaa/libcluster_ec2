@@ -29,10 +29,10 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
-if Mix.env == :test do
+if Mix.env() == :test do
   config :ex_aws,
     access_key_id: "xxx",
     secret_access_key: "xxx"
-    
+
   config :tesla, adapter: :mock
 end

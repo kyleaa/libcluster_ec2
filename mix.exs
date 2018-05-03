@@ -2,17 +2,18 @@ defmodule ClusterEC2.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :libcluster_ec2,
-     version: "0.2.1",
-     elixir: "~> 1.4",
-     name: "libcluster_ec2",
-     source_url: "https://github.com/kyleaa/libcluster_ec2",
-     homepage_url: "https://github.com/kyleaa/libcluster_ec2",
-     description: description(),
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps(),
-     package: package(),
+    [
+      app: :libcluster_ec2,
+      version: "0.3.0",
+      elixir: "~> 1.4",
+      name: "libcluster_ec2",
+      source_url: "https://github.com/kyleaa/libcluster_ec2",
+      homepage_url: "https://github.com/kyleaa/libcluster_ec2",
+      description: description(),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      package: package()
     ]
   end
 
@@ -26,13 +27,14 @@ defmodule ClusterEC2.Mixfile do
 
   defp deps do
     [
-     {:libcluster, "~> 2.0"},
-     {:ex_aws, "~> 1.1"},
-     {:sweet_xml, "~> 0.6"},
-     {:hackney, "~> 1.8"},
-     {:poison, ">= 1.0.0"},
-     {:tesla, "~> 0.10.0"},
-     {:ex_doc, ">= 0.0.0", only: :dev},
+      {:libcluster, "~> 2.0"},
+      {:ex_aws, "~> 2.0"},
+      {:ex_aws_ec2, "~> 2.0"},
+      {:sweet_xml, "~> 0.6"},
+      {:hackney, "~> 1.8"},
+      {:poison, ">= 1.0.0"},
+      {:tesla, "~> 0.10.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
@@ -43,10 +45,12 @@ defmodule ClusterEC2.Mixfile do
   end
 
   def package do
-    [ maintainers: ["Kyle Anderson"],
+    [
+      maintainers: ["Kyle Anderson"],
       licenses: ["MIT License"],
       links: %{
-        "GitHub" => "https://github.com/kyleaa/libcluster_ec2.git",
-        }]
+        "GitHub" => "https://github.com/kyleaa/libcluster_ec2.git"
+      }
+    ]
   end
 end

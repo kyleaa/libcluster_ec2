@@ -3,12 +3,14 @@ defmodule ClusterEC2Test do
   doctest ClusterEC2
 
   setup do
-    Tesla.Mock.mock fn
+    Tesla.Mock.mock(fn
       %{method: :get, url: "http://169.254.169.254/latest/meta-data/instance-id/"} ->
         %Tesla.Env{status: 200, body: "i-0fdde7ca9faef9751"}
+
       %{method: :get, url: "http://169.254.169.254/latest/meta-data/placement/availability-zone/"} ->
         %Tesla.Env{status: 200, body: "eu-central-1b"}
-    end
+    end)
+
     :ok
   end
 
