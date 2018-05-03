@@ -1,3 +1,6 @@
+v0.3.0
+- Moved to ex_aws 2.0 https://github.com/kyleaa/libcluster_ec2/issues/8
+
 v0.2.1
 - Bug fix: Reconnection error handling. https://github.com/kyleaa/libcluster_ec2/pull/6
 
