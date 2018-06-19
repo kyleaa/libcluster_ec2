@@ -23,7 +23,7 @@ defmodule ClusterEC2.Strategy.Tags do
   | --- | -------- | ----------- |
   | `:ec2_tagname` | yes | Name of the EC2 instance tag to look for. |
   | `:ec2_tagvalue` | no | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
-  | `:app_prefix` | no | Will be appended to the node's private IP address to create the node name. |
+  | `:app_prefix` | no | Will be prepended to the node's private IP address to create the node name. |
   | `:ip_type` | no | One of :private or :public, defaults to :private |
   | `:polling_interval` | no | Number of milliseconds to wait between polls to the EC2 api. Defaults to 5_000 |
   """
