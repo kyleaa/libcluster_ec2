@@ -24,6 +24,6 @@ by adding `libcluster_ec2` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:libcluster_ec2, "~> 0.1.0"}]
+  [{:libcluster_ec2, "~> 0.3"}]
 end
 ```
