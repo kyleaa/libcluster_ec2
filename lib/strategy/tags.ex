@@ -43,6 +43,14 @@ defmodule ClusterEC2.Strategy.Tags do
     GenServer.start_link(__MODULE__, opts)
   end
 
+  # libcluster ~> 3.0
+  def init([%State{} = state]) do
+    state = state |> Map.put(:meta, MapSet.new())
+
+    {:ok, state, 0}
+  end
+
+  # libcluster ~> 2.0
   def init(opts) do
     state = %State{
       topology: Keyword.fetch!(opts, :topology),
