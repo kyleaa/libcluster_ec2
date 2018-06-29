@@ -1,11 +1,9 @@
 defmodule ClusterEC2 do
   use Tesla
-  import SweetXml, only: [sigil_x: 2]
 
   @moduledoc File.read!("#{__DIR__}/../README.md")
 
   plug(Tesla.Middleware.BaseUrl, "http://169.254.169.254/latest/meta-data")
-  plug(Tesla.Middleware.Tuples)
 
   @doc """
     Queries the local EC2 instance metadata API to determine the instance ID of the current instance.

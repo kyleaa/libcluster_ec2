@@ -27,13 +27,13 @@ defmodule ClusterEC2.Mixfile do
 
   defp deps do
     [
-      {:libcluster, "~> 2.0"},
+      {:libcluster, "~> 2.0 or ~> 3.0"},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_ec2, "~> 2.0"},
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.8"},
       {:poison, ">= 1.0.0"},
-      {:tesla, "~> 0.10.0"},
+      {:tesla, "~> 1.0.0"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end

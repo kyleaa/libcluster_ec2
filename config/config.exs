@@ -34,5 +34,5 @@ if Mix.env() == :test do
     access_key_id: "xxx",
     secret_access_key: "xxx"
 
-  config :tesla, adapter: :mock
+  config :tesla, adapter: Tesla.Mock
 end
