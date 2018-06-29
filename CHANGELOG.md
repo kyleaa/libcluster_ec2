@@ -1,3 +1,6 @@
+v0.4.0
+- Updated to Tesla 1.0 and support for libcluster 3.0)
+
 v0.3.0
 - Moved to ex_aws 2.0 https://github.com/kyleaa/libcluster_ec2/issues/8
 

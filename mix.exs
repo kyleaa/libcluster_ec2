@@ -4,7 +4,7 @@ defmodule ClusterEC2.Mixfile do
   def project do
     [
       app: :libcluster_ec2,
-      version: "0.3.0",
+      version: "0.4.0",
       elixir: "~> 1.4",
       name: "libcluster_ec2",
       source_url: "https://github.com/kyleaa/libcluster_ec2",
