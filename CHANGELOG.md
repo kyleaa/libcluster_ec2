@@ -1,3 +1,6 @@
+v0.4.1
+- Bug fix: skip EC2 instances that are not running
+
 v0.4.0
 - Updated to Tesla 1.0 and support for libcluster 3.0)
 

@@ -124,7 +124,7 @@ defmodule ClusterEC2.Strategy.Tags do
 
     cond do
       tag_name != nil and tag_value != nil and app_prefix != nil and instance_id != "" and region != "" ->
-        params = [filters: ["tag:#{tag_name}": fetch_tag_value(tag_name, tag_value)]]
+        params = [filters: ["tag:#{tag_name}": fetch_tag_value(tag_name, tag_value), "instance-state-name": "running"]]
         request = ExAws.EC2.describe_instances(params)
         require Logger
         Logger.debug("#{inspect(request)}")
