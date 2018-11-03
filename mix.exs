@@ -4,7 +4,7 @@ defmodule ClusterEC2.Mixfile do
   def project do
     [
       app: :libcluster_ec2,
-      version: "0.4.0",
+      version: "0.4.2",
       elixir: "~> 1.4",
       name: "libcluster_ec2",
       source_url: "https://github.com/kyleaa/libcluster_ec2",
@@ -33,7 +33,7 @@ defmodule ClusterEC2.Mixfile do
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.8"},
       {:poison, ">= 1.0.0"},
-      {:tesla, "~> 1.1.0"},
+      {:tesla, "~> 1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
