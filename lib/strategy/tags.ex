@@ -44,6 +44,7 @@ defmodule ClusterEC2.Strategy.Tags do
   end
 
   # libcluster ~> 3.0
+  @impl GenServer
   def init([%State{} = state]) do
     state = state |> Map.put(:meta, MapSet.new())
 
@@ -64,6 +65,7 @@ defmodule ClusterEC2.Strategy.Tags do
     {:ok, state, 0}
   end
 
+  @impl GenServer
   def handle_info(:timeout, state) do
     handle_info(:load, state)
   end
