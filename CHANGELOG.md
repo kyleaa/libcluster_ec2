@@ -1,3 +1,6 @@
+v0.4.2
+- Bug fix: correct public IP address detection with tags strategy https://github.com/kyleaa/libcluster_ec2/pull/16
+
 v0.4.1
 - Bug fix: skip EC2 instances that are not running
 
