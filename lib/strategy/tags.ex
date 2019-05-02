@@ -12,9 +12,10 @@ defmodule ClusterEC2.Strategy.Tags do
             strategy: #{__MODULE__},
             config: [
               ec2_tagname: "mytag",
-              ec2_tagvalue: "tagvalue"
-              app_prefix: "app"
-              ip_type: :private
+              ec2_tagvalue: "tagvalue",
+              app_prefix: "app",
+              ip_to_nodename: &my_nodename_func/2,
+              ip_type: :private,
               polling_interval: 10_000]]]
 
   ## Configuration Options
@@ -25,6 +26,7 @@ defmodule ClusterEC2.Strategy.Tags do
   | `:ec2_tagvalue` | no | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
   | `:app_prefix` | no | Will be prepended to the node's private IP address to create the node name. |
   | `:ip_type` | no | One of :private or :public, defaults to :private |
+  | `:ip_to_nodename` | no | defaults to `app_prefix@ip` but can be used to override the nodename |
   | `:polling_interval` | no | Number of milliseconds to wait between polls to the EC2 api. Defaults to 5_000 |
   """
 
@@ -123,6 +125,7 @@ defmodule ClusterEC2.Strategy.Tags do
     tag_name = Keyword.fetch!(config, :ec2_tagname)
     tag_value = Keyword.get(config, :ec2_tagvalue, &local_instance_tag_value(&1, instance_id, region))
     app_prefix = Keyword.get(config, :app_prefix, "app")
+    ip_to_nodename = Keyword.get(config, :ip_to_nodename, &ip_to_nodename/2)
 
     cond do
       tag_name != nil and tag_value != nil and app_prefix != nil and instance_id != "" and region != "" ->
@@ -136,7 +139,7 @@ defmodule ClusterEC2.Strategy.Tags do
             resp =
               body
               |> SweetXml.xpath(ip_xpath(Keyword.get(config, :ip_type, :private)))
-              |> ip_to_nodename(app_prefix)
+              |> ip_to_nodename.(app_prefix)
 
             {:ok, MapSet.new(resp)}
 
