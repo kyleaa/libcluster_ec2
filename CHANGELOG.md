@@ -1,5 +1,10 @@
+v0.6.0
+- Enhancement: block on startup while attempting first load https://github.com/kyleaa/libcluster_ec2/pull/20
+- Enhancement: allow optional disable of debug logging https://github.com/kyleaa/libcluster_ec2/pull/21/files
+
 v0.5.0
 - Enhancement: add ability to configure ip_to_nodename function. https://github.com/kyleaa/libcluster_ec2/pull/17
+
 v0.4.2
 - Bug fix: correct public IP address detection with tags strategy https://github.com/kyleaa/libcluster_ec2/pull/16
 
