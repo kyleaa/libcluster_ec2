@@ -52,7 +52,7 @@ defmodule ClusterEC2.Strategy.Tags do
   def init([%State{} = state]) do
     state = state |> Map.put(:meta, MapSet.new())
 
-    {:ok, state, 0}
+    {:ok, load(state)}
   end
 
   # libcluster ~> 2.0
@@ -66,7 +66,7 @@ defmodule ClusterEC2.Strategy.Tags do
       meta: MapSet.new([])
     }
 
-    {:ok, state, 0}
+    {:ok, load(state)}
   end
 
   @impl GenServer
@@ -74,10 +74,15 @@ defmodule ClusterEC2.Strategy.Tags do
     handle_info(:load, state)
   end
 
-  def handle_info(
-        :load,
-        %State{topology: topology, connect: connect, disconnect: disconnect, list_nodes: list_nodes} = state
-      ) do
+  def handle_info(:load, %State{} = state) do
+    {:noreply, load(state)}
+  end
+
+  def handle_info(_, state) do
+    {:noreply, state}
+  end
+
+  defp load(%State{topology: topology, connect: connect, disconnect: disconnect, list_nodes: list_nodes} = state) do
     case get_nodes(state) do
       {:ok, new_nodelist} ->
         added = MapSet.difference(new_nodelist, state.meta)
@@ -108,16 +113,12 @@ defmodule ClusterEC2.Strategy.Tags do
           end
 
         Process.send_after(self(), :load, Keyword.get(state.config, :polling_interval, @default_polling_interval))
-        {:noreply, %{state | :meta => new_nodelist}}
+        %{state | :meta => new_nodelist}
 
       _ ->
         Process.send_after(self(), :load, Keyword.get(state.config, :polling_interval, @default_polling_interval))
-        {:noreply, state}
+        state
     end
-  end
-
-  def handle_info(_, state) do
-    {:noreply, state}
   end
 
   @spec get_nodes(State.t()) :: {:ok, [atom()]} | {:error, []}
