@@ -85,7 +85,6 @@ defmodule ClusterEC2.Strategy.Tags do
   defp load(%State{topology: topology, connect: connect, disconnect: disconnect, list_nodes: list_nodes} = state) do
     case get_nodes(state) do
       {:ok, new_nodelist} ->
-        added = MapSet.difference(new_nodelist, state.meta)
         removed = MapSet.difference(state.meta, new_nodelist)
 
         new_nodelist =
@@ -101,7 +100,7 @@ defmodule ClusterEC2.Strategy.Tags do
           end
 
         new_nodelist =
-          case Cluster.Strategy.connect_nodes(topology, connect, list_nodes, MapSet.to_list(added)) do
+          case Cluster.Strategy.connect_nodes(topology, connect, list_nodes, MapSet.to_list(new_nodelist)) do
             :ok ->
               new_nodelist
 
