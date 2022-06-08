@@ -196,7 +196,7 @@ defmodule ClusterEC2.Strategy.Tags do
     do: ~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/privateIpAddress/text()"ls
 
   defp ip_xpath(:public),
-    do: ~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/IpAddress/text()"ls
+    do: ~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/ipAddress/text()"ls
 
   defp fetch_tag_value(_k, v) when is_function(v, 0), do: v.()
   defp fetch_tag_value(k, v) when is_function(v, 1), do: v.(k)
