@@ -25,6 +25,7 @@ defmodule ClusterEC2.Strategy.Tags do
   | --- | -------- | ----------- |
   | `:ec2_tagname` | yes | Name of the EC2 instance tag to look for. |
   | `:ec2_tagvalue` | no | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
+  | `:use_imds_v2` | no | Use IMDSv2. Defaults to true |
   | `:app_prefix` | no | Will be prepended to the node's private IP address to create the node name. |
   | `:ip_type` | no | One of :private or :public, defaults to :private |
   | `:ip_to_nodename` | no | defaults to `app_prefix@ip` but can be used to override the nodename |
@@ -122,8 +123,9 @@ defmodule ClusterEC2.Strategy.Tags do
 
   @spec get_nodes(State.t()) :: {:ok, [atom()]} | {:error, []}
   defp get_nodes(%State{topology: topology, config: config}) do
-    instance_id = ClusterEC2.local_instance_id()
-    region = ClusterEC2.instance_region()
+    use_imds_v2 = Keyword.get(config, :use_imds_v2, true)
+    instance_id = ClusterEC2.local_instance_id(use_imds_v2)
+    region = ClusterEC2.instance_region(use_imds_v2)
     tag_name = Keyword.fetch!(config, :ec2_tagname)
     tag_value = Keyword.get(config, :ec2_tagvalue, &local_instance_tag_value(&1, instance_id, region))
     app_prefix = Keyword.get(config, :app_prefix, "app")

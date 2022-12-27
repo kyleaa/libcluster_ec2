@@ -17,7 +17,8 @@ defmodule Strategy.TagsErrorTest do
       disconnect: {:net_kernel, :disconnect, []},
       list_nodes: {:erlang, :nodes, [:connected]},
       config: [
-        ec2_tagname: "elasticbeanstalk:environment-name"
+        ec2_tagname: "elasticbeanstalk:environment-name",
+        use_imds_v2: false
       ]
     ]
 
@@ -29,7 +30,7 @@ defmodule Strategy.TagsErrorTest do
     assert :load == send(pid, :load)
 
     assert %Cluster.Strategy.State{
-             config: [ec2_tagname: "elasticbeanstalk:environment-name"],
+             config: [ec2_tagname: "elasticbeanstalk:environment-name", use_imds_v2: false],
              connect: {:net_kernel, :connect, []},
              disconnect: {:net_kernel, :disconnect, []},
              list_nodes: {:erlang, :nodes, [:connected]},
