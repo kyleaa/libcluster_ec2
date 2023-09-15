@@ -25,7 +25,7 @@ defmodule ClusterEC2 do
   """
   @spec instance_region() :: binary()
   def instance_region do
-    with {:ok, 200, _headers, ref} <- HTTPClient.get(@base_url <> "/availability-zone/"),
+    with {:ok, 200, _headers, ref} <- HTTPClient.get(@base_url <> "/placement/availability-zone/"),
          {:ok, az} <- HTTPClient.body(ref) do
       String.slice(az, 0..-2)
     else
