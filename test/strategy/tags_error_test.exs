@@ -34,8 +34,6 @@ defmodule Strategy.TagsErrorTest do
 
     {:ok, pid} = ClusterEC2.Strategy.Tags.start_link(ops)
 
-    ClusterEC2Mock |> allow(pid, self())
-
     assert :load == send(pid, :load)
 
     assert %Cluster.Strategy.State{
