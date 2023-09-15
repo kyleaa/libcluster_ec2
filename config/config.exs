@@ -1,6 +1,6 @@
 # This file is responsible for configuring your application
 # and its dependencies with the aid of the Mix.Config module.
-use Mix.Config
+import Config
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
@@ -32,7 +32,9 @@ use Mix.Config
 if Mix.env() == :test do
   config :ex_aws,
     access_key_id: "xxx",
-    secret_access_key: "xxx"
+    secret_access_key: "xxx",
+    http_client: ClusterEC2.HTTPClientMock
 
-  config :tesla, adapter: Tesla.Mock
+  config :libcluster_ec2, :http_client, ClusterEC2.HTTPClientMock
+  config :libcluster_ec2, :cluster_ec2_module, ClusterEC2Mock
 end
