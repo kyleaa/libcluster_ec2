@@ -2,13 +2,24 @@ defmodule Strategy.TagsErrorTest do
   use ExUnit.Case, async: false
   doctest ClusterEC2
 
-  setup do
-    Tesla.Mock.mock_global(fn
-      %{method: :get, url: "http://169.254.169.254/latest/meta-data/instance-id/"} ->
-        %Tesla.Env{status: 200, body: ""}
+  import Mox
+  setup :verify_on_exit!
+  setup :set_mox_from_context
 
-      %{method: :get, url: "http://169.254.169.254/latest/meta-data/placement/availability-zone/"} ->
-        %Tesla.Env{status: 200, body: ""}
+  test "test info call :load" do
+    ClusterEC2Mock
+    |> stub(:local_instance_id, fn ->
+      "i-0fdde7ca9faef9751"
+    end)
+    |> stub(:instance_region, fn ->
+      "eu-central-1b"
+    end)
+
+    ClusterEC2.HTTPClientMock
+    |> stub(:request, fn _, _, _, _, _ ->
+      {:ok, body} = File.read("test/fixtures/ec2_metadata.xml")
+
+      {:ok, %{status_code: 200, headers: [], body: body}}
     end)
 
     ops = [
@@ -21,11 +32,8 @@ defmodule Strategy.TagsErrorTest do
       ]
     ]
 
-    {:ok, server_pid} = ClusterEC2.Strategy.Tags.start_link(ops)
-    {:ok, server: server_pid}
-  end
+    {:ok, pid} = ClusterEC2.Strategy.Tags.start_link(ops)
 
-  test "test info call :load", %{server: pid} do
     assert :load == send(pid, :load)
 
     assert %Cluster.Strategy.State{
@@ -36,5 +44,7 @@ defmodule Strategy.TagsErrorTest do
              meta: MapSet.new([]),
              topology: ClusterEC2.Strategy.Tags
            } == :sys.get_state(pid)
+
+    Process.exit(pid, :kill)
   end
 end

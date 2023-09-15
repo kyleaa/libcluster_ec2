@@ -26,7 +26,7 @@ defmodule ClusterEC2.Strategy.Tags do
   | `:ec2_tagname` | yes | Name of the EC2 instance tag to look for. |
   | `:ec2_tagvalue` | no | Can be passed a static value (string), a 0-arity function, or a 1-arity function (which will be passed the value of `:ec2_tagname` at invocation). |
   | `:app_prefix` | no | Will be prepended to the node's private IP address to create the node name. |
-  | `:ip_type` | no | One of :private or :public, defaults to :private |
+  | `:ip_type` | no | One of :private, :public or :private_dns, defaults to :private |
   | `:ip_to_nodename` | no | defaults to `app_prefix@ip` but can be used to override the nodename |
   | `:polling_interval` | no | Number of milliseconds to wait between polls to the EC2 api. Defaults to 5_000 |
   | `:show_debug` | no | True or false, whether or not to show the debug log. Defaults to true |
@@ -122,8 +122,8 @@ defmodule ClusterEC2.Strategy.Tags do
 
   @spec get_nodes(State.t()) :: {:ok, [atom()]} | {:error, []}
   defp get_nodes(%State{topology: topology, config: config}) do
-    instance_id = ClusterEC2.local_instance_id()
-    region = ClusterEC2.instance_region()
+    instance_id = cluster_ec2_module().local_instance_id()
+    region = cluster_ec2_module().instance_region()
     tag_name = Keyword.fetch!(config, :ec2_tagname)
     tag_value = Keyword.get(config, :ec2_tagvalue, &local_instance_tag_value(&1, instance_id, region))
     app_prefix = Keyword.get(config, :app_prefix, "app")
@@ -198,6 +198,9 @@ defmodule ClusterEC2.Strategy.Tags do
   defp ip_xpath(:public),
     do: ~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/ipAddress/text()"ls
 
+  defp ip_xpath(:private_dns),
+    do: ~x"//DescribeInstancesResponse/reservationSet/item/instancesSet/item/privateDnsName/text()"ls
+
   defp fetch_tag_value(_k, v) when is_function(v, 0), do: v.()
   defp fetch_tag_value(k, v) when is_function(v, 1), do: v.(k)
   defp fetch_tag_value(_k, v), do: v
@@ -207,5 +210,9 @@ defmodule ClusterEC2.Strategy.Tags do
     |> Enum.map(fn ip ->
       :"#{app_prefix}@#{ip}"
     end)
+  end
+
+  defp cluster_ec2_module do
+    Application.get_env(:libcluster_ec2, :cluster_ec2_module, ClusterEC2)
   end
 end

@@ -1,0 +1,5 @@
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+    <requestId>8f7724cf-496f-496e-8fe3-example</requestId>
+    <reservationSet>
+    </reservationSet>
+</DescribeInstancesResponse>
