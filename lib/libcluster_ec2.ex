@@ -22,7 +22,7 @@ defmodule ClusterEC2 do
   @spec instance_region() :: binary()
   def instance_region do
     case get("/placement/availability-zone/") do
-      {:ok, %{status: 200, body: body}} -> String.slice(body, 0..-2)
+      {:ok, %{status: 200, body: body}} -> String.slice(body, 0..-2//1)
       _ -> ""
     end
   end
