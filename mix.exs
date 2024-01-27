@@ -4,7 +4,7 @@ defmodule ClusterEC2.Mixfile do
   def project do
     [
       app: :libcluster_ec2,
-      version: "0.7.0",
+      version: "0.8.0",
       elixir: "~> 1.4",
       name: "libcluster_ec2",
       source_url: "https://github.com/kyleaa/libcluster_ec2",
@@ -28,11 +28,10 @@ defmodule ClusterEC2.Mixfile do
   defp deps do
     [
       {:libcluster, "~> 2.0 or ~> 3.0"},
-      {:ex_aws, "~> 2.0"},
+      {:ex_aws, "~> 2.3.2"},
       {:ex_aws_ec2, "~> 2.0"},
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.8"},
-      {:tesla, "~> 1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end

@@ -27,3 +27,26 @@ def deps do
   [{:libcluster_ec2, "~> 0.5"}]
 end
 ```
+
+## AWS IAM Requirements
+
+Instances must have an instance role attached. There are two permissions required:
+* `ec2:DescribeInstances` - Required to determine tag values of the current running instance. Can be restricted by Resource to the current instance running the application
+* `ec2:DescribeTags` - Required to identify other instances with the same tags 
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeInstances",
+                "ec2:DescribeTags"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```

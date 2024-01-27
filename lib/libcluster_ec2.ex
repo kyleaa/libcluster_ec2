@@ -1,29 +1,24 @@
 defmodule ClusterEC2 do
-  use Tesla
 
   @moduledoc File.read!("#{__DIR__}/../README.md")
-
-  plug(Tesla.Middleware.BaseUrl, "http://169.254.169.254/latest/meta-data")
 
   @doc """
     Queries the local EC2 instance metadata API to determine the instance ID of the current instance.
   """
   @spec local_instance_id() :: binary()
-  def local_instance_id do
-    case get("/instance-id/") do
-      {:ok, %{status: 200, body: body}} -> body
-      _ -> ""
-    end
-  end
+  def local_instance_id, do: get_metadata("/instance-id/")
 
   @doc """
     Queries the local EC2 instance metadata API to determine the aws resource region of the current instance.
   """
   @spec instance_region() :: binary()
   def instance_region do
-    case get("/placement/availability-zone/") do
-      {:ok, %{status: 200, body: body}} -> String.slice(body, 0..-2//1)
-      _ -> ""
-    end
+    get_metadata("/placement/availability-zone/")
+    |> String.slice(0..-2//1)
+  end
+
+  defp get_metadata(path) do
+    ExAws.Config.new(:ec2)
+    |> ExAws.InstanceMeta.request("http://169.254.169.254/latest/meta-data#{path}")
   end
 end
