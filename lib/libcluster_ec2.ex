@@ -17,7 +17,7 @@ defmodule ClusterEC2 do
     |> String.slice(0..-2//1)
   end
 
-  def get_metadata(path) do
+  defp get_metadata(path) do
     ExAws.Config.new(:ec2)
     |> ExAws.InstanceMeta.request("http://169.254.169.254/latest/meta-data#{path}")
   end
