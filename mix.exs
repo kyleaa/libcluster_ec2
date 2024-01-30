@@ -28,7 +28,7 @@ defmodule ClusterEC2.Mixfile do
   defp deps do
     [
       {:libcluster, "~> 2.0 or ~> 3.0"},
-      {:ex_aws, "~> 2.3.2"},
+      {:ex_aws, ">= 2.3.2"},
       {:ex_aws_ec2, "~> 2.0"},
       {:sweet_xml, "~> 0.6"},
       {:hackney, "~> 1.8"},
