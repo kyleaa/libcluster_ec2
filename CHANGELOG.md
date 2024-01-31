@@ -1,3 +1,6 @@
+v0.8.1
+- Bug fix: relax ex_aws requirement https://github.com/kyleaa/libcluster_ec2/pull/34
+
 v0.8.0
 - Enhancement: Support IMDSv2 (Requires ExAws 2.3.2 minimum) https://github.com/kyleaa/libcluster_ec2/pull/33
 
