@@ -49,19 +49,32 @@ defmodule ClusterEC2.Strategy.Tags do
   # libcluster ~> 3.0
   @impl GenServer
   def init([%State{} = state]) do
-    state = state |> Map.put(:meta, MapSet.new())
+    instance_meta = [
+      instance_id: ClusterEC2.local_instance_id(),
+      region: ClusterEC2.instance_region()
+    ]
+
+    state =
+      state
+      |> Map.put(:meta, MapSet.new())
+      |> Map.put(:config, state.config ++ instance_meta)
 
     {:ok, load(state)}
   end
 
   # libcluster ~> 2.0
   def init(opts) do
+    instance_meta = [
+      instance_id: ClusterEC2.local_instance_id(),
+      region: ClusterEC2.instance_region()
+    ]
+
     state = %State{
       topology: Keyword.fetch!(opts, :topology),
       connect: Keyword.fetch!(opts, :connect),
       disconnect: Keyword.fetch!(opts, :disconnect),
       list_nodes: Keyword.fetch!(opts, :list_nodes),
-      config: Keyword.fetch!(opts, :config),
+      config: Keyword.fetch!(opts, :config) ++ instance_meta,
       meta: MapSet.new([])
     }
 
@@ -121,8 +134,8 @@ defmodule ClusterEC2.Strategy.Tags do
 
   @spec get_nodes(State.t()) :: {:ok, [atom()]} | {:error, []}
   defp get_nodes(%State{topology: topology, config: config}) do
-    instance_id = ClusterEC2.local_instance_id()
-    region = ClusterEC2.instance_region()
+    instance_id = Keyword.get(config, :instance_id, "")
+    region = Keyword.get(config, :region, "")
     tag_name = Keyword.fetch!(config, :ec2_tagname)
     tag_value = Keyword.get(config, :ec2_tagvalue, &local_instance_tag_value(&1, instance_id, region))
     app_prefix = Keyword.get(config, :app_prefix, "app")
