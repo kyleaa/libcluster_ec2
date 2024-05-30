@@ -1,3 +1,6 @@
+v0.8.2
+- Bug fix: Fetch instance metadata at startup only https://github.com/kyleaa/libcluster_ec2/pull/38
+
 v0.8.1
 - Bug fix: relax ex_aws requirement https://github.com/kyleaa/libcluster_ec2/pull/34
 
