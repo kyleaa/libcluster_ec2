@@ -1,5 +1,4 @@
 defmodule ClusterEC2 do
-
   @moduledoc File.read!("#{__DIR__}/../README.md")
 
   @doc """
