@@ -4,7 +4,7 @@ defmodule ClusterEC2.Mixfile do
   def project do
     [
       app: :libcluster_ec2,
-      version: "0.8.2",
+      version: "0.8.3",
       elixir: "~> 1.4",
       name: "libcluster_ec2",
       source_url: "https://github.com/kyleaa/libcluster_ec2",
@@ -44,7 +44,7 @@ defmodule ClusterEC2.Mixfile do
   def package do
     [
       maintainers: ["Kyle Anderson"],
-      licenses: ["MIT License"],
+      licenses: ["MIT"],
       links: %{
         "GitHub" => "https://github.com/kyleaa/libcluster_ec2.git"
       }

@@ -1,3 +1,7 @@
+v0.8.3
+- Enhancement: Relax dependencies https://github.com/kyleaa/libcluster_ec2/pull/39
+- Bug fix: Fix MIT License SPDX ID for Hex Publication
+
 v0.8.2
 - Bug fix: Fetch instance metadata at startup only https://github.com/kyleaa/libcluster_ec2/pull/38
 
